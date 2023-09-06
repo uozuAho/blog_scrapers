@@ -1,0 +1,15 @@
+{
+  "name": "scraperjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "eigth": "node src/eigth.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "webdriverio": "^8.16.4"
+  }
+}
