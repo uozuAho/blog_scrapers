@@ -8,5 +8,3 @@ npm run eigth
 ```
 
 # todo
-- set diff not working. test/whatever
-- convert to typescript. js just sucks

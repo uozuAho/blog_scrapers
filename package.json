@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "eigth": "node src/eigth.js"
+    "eigth": "ts-node src/eigth.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^20.5.9",
+    "@wdio/globals": "^8.16.4",
+    "@wdio/types": "^8.16.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
     "webdriverio": "^8.16.4"
   }
 }

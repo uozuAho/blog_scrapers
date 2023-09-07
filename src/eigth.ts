@@ -1,7 +1,19 @@
-import { remote } from 'webdriverio'
+/**
+ * Scrape all blog links from 8thlight.com/insights
+ *
+ * Node runs out of memory before all posts are loaded. Dunno why. It gets
+ * slower as more posts are loaded, perhaps because the DOM is getting bigger
+ * and bigger. It manages to load 300 posts, that'll do for now.
+ *
+ * Maybe:
+ * - manually make requests to load more blogs instead of clicking the button
+ */
+
+
 import fs from 'fs'
 
 async function startBrowser() {
+    const remote = require('webdriverio').remote;
     return await remote({
         capabilities: {
             browserName: 'chrome',
@@ -11,13 +23,9 @@ async function startBrowser() {
     })
 }
 
-/**
- * @param {WebdriverIO.Browser} browser
- * @returns {Promise<Set<string>>}
- */
-async function getAllBlogLinks(browser) {
+async function getAllBlogLinks(browser: WebdriverIO.Browser): Promise<Set<string>> {
     const links = await browser.$$('a')
-    const linkStrings = await Promise.all(links.map(x => x.getAttribute('href')))
+    const linkStrings = await Promise.all(links.map((x: any) => x.getAttribute('href')))
     const blogLinks = linkStrings.filter(isBlogPost)
     return new Set(blogLinks)
 }
@@ -25,13 +33,13 @@ async function getAllBlogLinks(browser) {
 /**
  * @param {WebdriverIO.Browser} browser
  */
-async function clickLoadButton(browser) {
+async function clickLoadButton(browser: WebdriverIO.Browser) {
     const loadBtn = await browser.$('=LOAD MORE')
     await loadBtn.waitForClickable()
     await loadBtn.click()
 }
 
-function isBlogPost(link) {
+function isBlogPost(link: string) {
     return link.startsWith('https://8thlight.com/insights/')
 }
 
@@ -40,7 +48,7 @@ function isBlogPost(link) {
  * @param {Set} setA
  * @param {Set} setB
  */
-function difference(setA, setB) {
+function difference(setA: Set<string>, setB: Set<string>) {
     const _difference = new Set(setA)
     for (const elem of setB) {
         _difference.delete(elem);
@@ -48,13 +56,13 @@ function difference(setA, setB) {
     return _difference;
 }
 
-function appendToFile(linkSet, path) {
-    fs.appendFileSync(path, [...linkSet].join('\n'))
+function appendToFile(links: Set<string>, path: string) {
+    fs.appendFileSync(path, [...links].join('\n') + '\n')
 }
 
 async function main() {
     const browser = await startBrowser()
-    const existingLinks = new Set()
+    const existingLinks: Set<string> = new Set()
     await browser.url('https://8thlight.com/insights')
 
     let diff;
@@ -63,7 +71,9 @@ async function main() {
         diff = difference(allLinks, existingLinks)
         console.log(diff.size)
         appendToFile(diff, 'links.txt')
-        existingLinks.add(...diff)
+        for (const d of diff) {
+            existingLinks.add(d)
+        }
         await clickLoadButton(browser)
         await browser.pause(1000)
     } while (diff.size > 0)
@@ -71,4 +81,4 @@ async function main() {
     await browser.deleteSession()
 }
 
-await main()
+main().then(() => console.log('done'));
