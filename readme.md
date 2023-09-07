@@ -1,4 +1,4 @@
-# My webdriver.io scraper
+# My blog scrapers
 
 Install node 18
 
@@ -8,3 +8,4 @@ npm run eigth
 ```
 
 # todo
+- doc coding horror
